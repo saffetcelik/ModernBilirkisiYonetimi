@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel'den JSON'a Dönüştürücü</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center mb-0">
+                            <i class="fas fa-file-excel"></i>
+                            Excel'den JSON'a Dönüştürücü
+                        </h3>
+                        <p class="text-center text-muted mb-0">Bilirkişi verilerinizi ASP.NET Core uygulaması için hazırlayın</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Dosya Seçimi -->
+                        <div class="mb-4">
+                            <label for="excelFile" class="form-label">Excel Dosyası Seçin:</label>
+                            <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xlsm,.xls" onchange="dosyaSecildi()">
+                            <div class="form-text">Sakarya_Bilirkisiler_*.xlsx dosyanızı seçin</div>
+                        </div>
+
+                        <!-- Sayfa Seçimi -->
+                        <div class="mb-4" id="sayfaSecimi" style="display: none;">
+                            <label for="sayfaSelect" class="form-label">Sayfa Seçin:</label>
+                            <select class="form-select" id="sayfaSelect">
+                                <option value="">Sayfa seçin...</option>
+                            </select>
+                        </div>
+
+                        <!-- Dönüştür Butonu -->
+                        <div class="text-center mb-4">
+                            <button class="btn btn-primary btn-lg" id="donusturBtn" onclick="donustur()" disabled>
+                                <i class="fas fa-cogs"></i>
+                                JSON'a Dönüştür
+                            </button>
+                        </div>
+
+                        <!-- Sonuç Alanı -->
+                        <div id="sonucAlani" style="display: none;">
+                            <h5>Dönüştürme Sonucu:</h5>
+                            <div class="alert alert-success" id="basariMesaji"></div>
+                            
+                            <!-- JSON Önizleme -->
+                            <div class="mb-3">
+                                <label for="jsonOnizleme" class="form-label">JSON Önizleme (İlk 5 kayıt):</label>
+                                <textarea class="form-control" id="jsonOnizleme" rows="10" readonly></textarea>
+                            </div>
+
+                            <!-- İndirme Butonu -->
+                            <div class="text-center">
+                                <button class="btn btn-success" id="indirBtn" onclick="jsonIndir()">
+                                    <i class="fas fa-download"></i>
+                                    bilirkisi_verileri.json İndir
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Yükleme Göstergesi -->
+                        <div id="yuklemeGostergesi" class="text-center" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Dönüştürülüyor...</span>
+                            </div>
+                            <p class="mt-2">Excel dosyası işleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kullanım Talimatları -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Kullanım Talimatları</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li><strong>Excel dosyanızı seçin</strong> (Sakarya_Bilirkisiler_*.xlsx)</li>
+                            <li><strong>Sayfayı seçin</strong> (genellikle ilk sayfa)</li>
+                            <li><strong>"JSON'a Dönüştür" butonuna tıklayın</strong></li>
+                            <li><strong>"bilirkisi_verileri.json" dosyasını indirin</strong></li>
+                            <li><strong>İndirilen dosyayı ASP.NET Core projenizin ana klasörüne kopyalayın</strong></li>
+                            <li><strong>Uygulamayı yeniden başlatın</strong></li>
+                        </ol>
+                        
+                        <div class="alert alert-info mt-3">
+                            <strong>Not:</strong> Excel dosyanızın şu sütun yapısında olması gerekir:
+                            <br>A: Sicil No, B: Ad Soyad, C: Temel Uzmanlık, D: Alt Uzmanlık, E: İl, F: Meslek
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let excelData = null;
+        let jsonData = null;
+
+        function dosyaSecildi() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Sayfa isimlerini listele
+                    const sayfaSelect = document.getElementById('sayfaSelect');
+                    sayfaSelect.innerHTML = '<option value="">Sayfa seçin...</option>';
+                    
+                    workbook.SheetNames.forEach(sheetName => {
+                        const option = document.createElement('option');
+                        option.value = sheetName;
+                        option.textContent = sheetName;
+                        sayfaSelect.appendChild(option);
+                    });
+
+                    excelData = workbook;
+                    document.getElementById('sayfaSecimi').style.display = 'block';
+                    
+                    // İlk sayfayı otomatik seç
+                    if (workbook.SheetNames.length > 0) {
+                        sayfaSelect.value = workbook.SheetNames[0];
+                        document.getElementById('donusturBtn').disabled = false;
+                    }
+
+                } catch (error) {
+                    alert('Excel dosyası okunamadı: ' + error.message);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function donustur() {
+            if (!excelData) {
+                alert('Önce bir Excel dosyası seçin');
+                return;
+            }
+
+            const selectedSheet = document.getElementById('sayfaSelect').value;
+            if (!selectedSheet) {
+                alert('Bir sayfa seçin');
+                return;
+            }
+
+            document.getElementById('yuklemeGostergesi').style.display = 'block';
+            document.getElementById('sonucAlani').style.display = 'none';
+
+            try {
+                // Seçilen sayfayı al
+                const worksheet = excelData.Sheets[selectedSheet];
+                const jsonArray = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // Başlık satırını al
+                const headers = jsonArray[0] || [];
+                
+                // Veri satırlarını işle
+                const bilirkisiler = [];
+                for (let i = 1; i < jsonArray.length; i++) {
+                    const row = jsonArray[i];
+                    
+                    // Boş satırları atla
+                    if (!row || row.length === 0 || !row[1]) continue;
+
+                    const bilirkisi = {
+                        id: i,
+                        sicilNo: (row[0] || '').toString().trim(),
+                        adSoyad: (row[1] || '').toString().trim(),
+                        temelUzmanlikAlanlari: (row[2] || '').toString().trim(),
+                        altUzmanlikAlanlari: (row[3] || '').toString().trim(),
+                        il: (row[4] || '').toString().trim(),
+                        meslegi: (row[5] || '').toString().trim(),
+                        tumBilgiler: createTumBilgiler(row)
+                    };
+
+                    bilirkisiler.push(bilirkisi);
+                }
+
+                // JSON yapısını oluştur
+                jsonData = {
+                    metadata: {
+                        kaynak: document.getElementById('excelFile').files[0].name,
+                        olusturmaTarihi: new Date().toISOString(),
+                        toplamKayit: bilirkisiler.length,
+                        aciklama: "Sakarya Bilirkişi Sicil Verileri - ASP.NET Core için hazırlandı"
+                    },
+                    bilirkisiler: bilirkisiler
+                };
+
+                // Sonuçları göster
+                gosterSonuc(bilirkisiler.length);
+
+            } catch (error) {
+                alert('Dönüştürme sırasında hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('yuklemeGostergesi').style.display = 'none';
+            }
+        }
+
+        function createTumBilgiler(row) {
+            const parts = [];
+            
+            if (row[0]) parts.push(`Sicil No: ${row[0]}`);
+            if (row[1]) parts.push(`Ad Soyad: ${row[1]}`);
+            if (row[2]) parts.push(`Temel Uzmanlık: ${row[2]}`);
+            if (row[3]) parts.push(`Alt Uzmanlık: ${row[3]}`);
+            if (row[4]) parts.push(`İl: ${row[4]}`);
+            if (row[5]) parts.push(`Meslek: ${row[5]}`);
+            
+            return parts.join(' | ');
+        }
+
+        function gosterSonuc(kayitSayisi) {
+            document.getElementById('sonucAlani').style.display = 'block';
+            document.getElementById('basariMesaji').textContent = 
+                `Başarılı! ${kayitSayisi} bilirkişi kaydı JSON formatına dönüştürüldü.`;
+
+            // İlk 5 kaydı önizleme olarak göster
+            const onizleme = {
+                ...jsonData,
+                bilirkisiler: jsonData.bilirkisiler.slice(0, 5)
+            };
+
+            document.getElementById('jsonOnizleme').value = 
+                JSON.stringify(onizleme, null, 2);
+        }
+
+        function jsonIndir() {
+            if (!jsonData) {
+                alert('Önce dönüştürme işlemini yapın');
+                return;
+            }
+
+            const jsonString = JSON.stringify(jsonData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bilirkisi_verileri.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('JSON dosyası indirildi! Şimdi bu dosyayı ASP.NET Core projenizin ana klasörüne kopyalayın.');
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>
