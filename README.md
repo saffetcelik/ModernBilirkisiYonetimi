@@ -4,7 +4,17 @@
 
 Uzman Raporu, adli ve hukuki süreçlerinizde en doğru bilirkişiyi saniyeler içinde bulmanızı sağlayan modern bir masaüstü uygulamasıdır. Gelişmiş arama ve filtreleme yetenekleriyle, Türkiye'nin dört bir yanındaki binlerce uzman profiline anında erişim sunarak adaletin hızına hız katar.
 
-![Uygulama Arayüzü](https://raw.githubusercontent.com/saffetcelik/ModernBilirkisiYonetimi/main/tanitim.gif)
+## 📸 Ekran Görüntüleri
+
+<div align="center">
+
+![Ana Arayüz](./iller/ss1.png)
+*Ana arayüz - Gelişmiş arama ve filtreleme özellikleri*
+
+![Detaylı Görünüm](./iller/ss2.png)
+*Bilirkişi detayları ve istatistik görünümü*
+
+</div>
 
 ---
 
