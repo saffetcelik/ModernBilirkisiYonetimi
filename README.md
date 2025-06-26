@@ -60,7 +60,11 @@ Uzman Raporu, adli ve hukuki süreçlerinizde en doğru bilirkişiyi saniyeler i
 
 ### Hızlı Build (Önerilen)
 ```powershell
+# Release build oluştur
 .\build-release-final.ps1 -Version "1.0.1"
+
+# Version güncelle ve tag oluştur
+.\version-bump.ps1 -BumpType patch -CreateTag -PushTag
 ```
 
 ### GitHub Actions ile Otomatik Release

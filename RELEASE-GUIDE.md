@@ -4,19 +4,24 @@ Bu rehber, Uzman Raporu uygulamasının performanslı release sürümlerini olu�
 
 ## 📦 Yerel Build (Manuel)
 
-### Hızlı Build
+### Release Build
 ```powershell
 .\build-release-final.ps1 -Version "1.0.1"
 ```
 
-### Detaylı Build (Eski Script)
-```powershell
-.\build-release.ps1 -Version "1.0.1" -Clean -SkipTests
-```
-
 ### Version Güncelleme
 ```powershell
+# Patch version (1.0.0 -> 1.0.1)
 .\version-bump.ps1 -BumpType patch -CreateTag -PushTag
+
+# Minor version (1.0.0 -> 1.1.0)
+.\version-bump.ps1 -BumpType minor -CreateTag -PushTag
+
+# Major version (1.0.0 -> 2.0.0)
+.\version-bump.ps1 -BumpType major -CreateTag -PushTag
+
+# Özel version
+.\version-bump.ps1 -CustomVersion "1.5.0" -CreateTag -PushTag
 ```
 
 ## 🤖 GitHub Actions (Otomatik)
@@ -86,10 +91,10 @@ Proje dosyası. Performans optimizasyonları ve metadata içerir:
 - EnableCompressionInSingleFile: true
 
 ### `build-release-final.ps1`
-Yerel build script'i. Manuel release oluşturmak için kullanılır.
+Ana build script'i. Performanslı release oluşturmak için kullanılır.
 
 ### `version-bump.ps1`
-Version güncelleme script'i. Semantic versioning ile otomatik güncelleme.
+Version güncelleme script'i. Semantic versioning ile otomatik güncelleme ve tag oluşturma.
 
 ## 📝 Release Süreci Adımları
 
