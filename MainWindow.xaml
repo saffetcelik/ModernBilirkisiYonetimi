@@ -96,15 +96,27 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Sol taraf - Kurulu Değiştir Butonu -->
-                <Button x:Name="ChangeKuruluButton" Grid.Column="0"
-                       Content="🏛️ Kurulu Değiştir"
-                       Click="ChangeKuruluButton_Click"
-                       Background="#6C757D" Foreground="White"
-                       FontSize="12" FontWeight="SemiBold"
-                       Padding="15,8" Margin="0,0,10,0"
-                       VerticalAlignment="Center"
-                       ToolTip="Bilirkişi kurulunu değiştir"/>
+                <!-- Sol taraf - Kurul Bilgisi ve Değiştir Butonu -->
+                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                    <Button x:Name="ChangeKuruluButton"
+                            Content="🏛️ Kurulu Değiştir"
+                            Click="ChangeKuruluButton_Click"
+                            Background="#6C757D" Foreground="White"
+                            FontSize="12" FontWeight="SemiBold"
+                            Padding="15,8" Margin="0,0,10,0"
+                            ToolTip="Bilirkişi kurulunu değiştir">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="🔄 Kurulu Değiştir" Click="ChangeKuruluButton_Click"/>
+                                <MenuItem Header="🗑️ Kurul Seçimini Temizle" Click="ClearKuruluSelection_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                    <TextBlock x:Name="KuruluInfoTextBlock"
+                               Text="Kurul Seçilmedi"
+                               Foreground="#E3F2FD" FontSize="10"
+                               Margin="0,5,10,0" HorizontalAlignment="Center"/>
+                </StackPanel>
 
                 <!-- Orta - Başlık -->
                 <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -135,11 +147,21 @@
 
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Ad Soyad:" FontWeight="SemiBold" Margin="5,0,5,5"/>
-                    <TextBox x:Name="SearchTextBox"
-                             Style="{StaticResource SearchTextBoxStyle}"
-                             TextChanged="SearchTextBox_TextChanged"
-                             KeyDown="SearchTextBox_KeyDown"
-                             Text="Bilirkişi adı girin (örn: UFUK GÜNGÖR)"/>
+                    <Grid>
+                        <TextBox x:Name="SearchTextBox"
+                                 Style="{StaticResource SearchTextBoxStyle}"
+                                 TextChanged="SearchTextBox_TextChanged"
+                                 KeyDown="SearchTextBox_KeyDown"
+                                 GotFocus="SearchTextBox_GotFocus"
+                                 LostFocus="SearchTextBox_LostFocus"/>
+                        <Label x:Name="SearchPlaceholder"
+                               Content="Bilirkişi adı girin (örn: UFUK GÜNGÖR)"
+                               Foreground="Gray"
+                               FontSize="16"
+                               Padding="15,8"
+                               IsHitTestVisible="False"
+                               Visibility="Visible"/>
+                    </Grid>
                 </StackPanel>
 
                 <Button x:Name="SearchButton" Grid.Column="1" 
@@ -389,10 +411,21 @@
                             <!-- Meslek Arama Alanı -->
                             <Border Grid.Row="1" Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,1,0,1">
                                 <StackPanel>
-                                    <TextBox x:Name="ProfessionSearchTextBox"
-                                            Text="Meslek ara..."
-                                            FontSize="12" Padding="8,5" Margin="0,0,0,5"
-                                            TextChanged="ProfessionSearchTextBox_TextChanged"/>
+                                    <Grid>
+                                        <TextBox x:Name="ProfessionSearchTextBox"
+                                                FontSize="12" Padding="8,5" Margin="0,0,0,5"
+                                                TextChanged="ProfessionSearchTextBox_TextChanged"
+                                                GotFocus="ProfessionSearchTextBox_GotFocus"
+                                                LostFocus="ProfessionSearchTextBox_LostFocus"/>
+                                        <Label x:Name="ProfessionSearchPlaceholder"
+                                               Content="Meslek ara..."
+                                               Foreground="Gray"
+                                               FontSize="12"
+                                               Padding="13,3"
+                                               Margin="0,0,0,5"
+                                               IsHitTestVisible="False"
+                                               Visibility="Visible"/>
+                                    </Grid>
 
                                     <!-- İl/İlçe Filtreleme -->
                                     <Grid>

@@ -27,12 +27,19 @@ namespace BilirkisiMasaustu
         private List<string> _allIller = new List<string>();
         private Dictionary<string, List<string>> _ilIlceMap = new Dictionary<string, List<string>>();
         private string _currentKuruluName = "Bilirkişi Kurulu";
+        private bool _isDataLoaded = false;
 
         public MainWindow()
         {
             _dataService = new BilirkisiDataService();
             _favoriService = new FavoriService();
             InitializeComponent();
+
+            // Placeholder'ları başlangıçta görünür yap
+            if (SearchPlaceholder != null)
+                SearchPlaceholder.Visibility = Visibility.Visible;
+            if (ProfessionSearchPlaceholder != null)
+                ProfessionSearchPlaceholder.Visibility = Visibility.Visible;
 
             // Event handlers
             _favoriService.FavorilerChanged += OnFavorilerChanged;
@@ -51,6 +58,9 @@ namespace BilirkisiMasaustu
                 // Kurulu adını dosya yolundan çıkar
                 var fileName = Path.GetFileNameWithoutExtension(selectedJsonPath);
                 _currentKuruluName = ParseKuruluNameFromFileName(fileName);
+
+                // UI yüklendikten sonra kurul bilgisini güncelle
+                Loaded += (s, e) => UpdateKuruluInfoOnStartup();
             }
             catch (Exception ex)
             {
@@ -101,15 +111,28 @@ namespace BilirkisiMasaustu
         {
             try
             {
+                // UI elementlerinin null olmadığını kontrol et
+                if (LoadingOverlay == null || StatusLabel == null)
+                {
+                    throw new InvalidOperationException("UI elementleri henüz yüklenmemiş");
+                }
+
                 LoadingOverlay.Visibility = Visibility.Visible;
                 StatusLabel.Text = "JSON dosyası yükleniyor...";
 
+                // DataService'in null olmadığını kontrol et
+                if (_dataService == null)
+                {
+                    throw new InvalidOperationException("DataService başlatılmamış");
+                }
+
                 bool success = await _dataService.LoadDataAsync();
-                
+
                 if (success)
                 {
                     var metadata = _dataService.GetMetadata();
-                    StatusLabel.Text = $"✅ {_dataService.TotalCount} bilirkişi yüklendi - {metadata.Kaynak}";
+                    var metadataKaynak = metadata?.Kaynak ?? "Bilinmeyen Kaynak";
+                    StatusLabel.Text = $"✅ {_dataService.TotalCount} bilirkişi yüklendi - {metadataKaynak}";
 
                     // Title'ı güncelle
                     Title = $"Bilirkişi Sicil Arama - {_dataService.TotalCount} Kayıt";
@@ -122,6 +145,8 @@ namespace BilirkisiMasaustu
 
                     // Meslekleri yükle
                     LoadProfessions();
+
+                    _isDataLoaded = true;
                 }
                 else
                 {
@@ -132,8 +157,10 @@ namespace BilirkisiMasaustu
             }
             catch (Exception ex)
             {
-                StatusLabel.Text = "❌ Hata oluştu";
-                MessageBox.Show($"Veri yükleme hatası:\n{ex.Message}", "Hata",
+                if (StatusLabel != null)
+                    StatusLabel.Text = "❌ Hata oluştu";
+
+                MessageBox.Show($"Veri yükleme hatası:\n{ex.Message}\n\nDetay:\n{ex.StackTrace}", "Hata",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -147,8 +174,13 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Placeholder kontrolü
+            UpdateSearchPlaceholder();
+
+            if (!_isDataLoaded) return;
+
             var searchText = SearchTextBox.Text.Trim();
-            
+
             if (searchText.Length >= 2)
             {
                 PerformSearch(searchText);
@@ -156,6 +188,25 @@ namespace BilirkisiMasaustu
             else if (searchText.Length == 0)
             {
                 ClearResults();
+            }
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSearchPlaceholder();
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSearchPlaceholder();
+        }
+
+        private void UpdateSearchPlaceholder()
+        {
+            if (SearchPlaceholder != null)
+            {
+                SearchPlaceholder.Visibility = string.IsNullOrEmpty(SearchTextBox.Text) ?
+                    Visibility.Visible : Visibility.Hidden;
             }
         }
 
@@ -196,12 +247,7 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void PerformSearch(string searchText)
         {
-            if (!_dataService.IsDataLoaded)
-            {
-                MessageBox.Show("Veriler henüz yüklenmedi!", "Uyarı", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            
 
             try
             {
@@ -276,20 +322,30 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void LoadFavorites()
         {
-            var favoriler = _favoriService.GetFavoriler();
-            FavoriteListBox.Items.Clear();
-
-            foreach (var favori in favoriler)
+            try
             {
-                FavoriteListBox.Items.Add(favori);
+                if (_favoriService == null || FavoriteListBox == null || FavoriteCountLabel == null)
+                    return;
+
+                var favoriler = _favoriService.GetFavoriler();
+                FavoriteListBox.Items.Clear();
+
+                foreach (var favori in favoriler)
+                {
+                    FavoriteListBox.Items.Add(favori);
+                }
+
+                FavoriteCountLabel.Text = $"⭐ Favoriler ({favoriler.Count})";
+
+                // Seçili bilirkişi varsa favori butonunu güncelle
+                if (_selectedBilirkisi != null)
+                {
+                    UpdateFavoriteButton(_selectedBilirkisi);
+                }
             }
-
-            FavoriteCountLabel.Text = $"⭐ Favoriler ({favoriler.Count})";
-
-            // Seçili bilirkişi varsa favori butonunu güncelle
-            if (_selectedBilirkisi != null)
+            catch (Exception ex)
             {
-                UpdateFavoriteButton(_selectedBilirkisi);
+                System.Diagnostics.Debug.WriteLine($"LoadFavorites hatası: {ex.Message}");
             }
         }
 
@@ -719,12 +775,6 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void StatsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_dataService.IsDataLoaded)
-            {
-                MessageBox.Show("Veriler henüz yüklenmedi!", "Uyarı",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
 
             var statsWindow = new StatisticsWindow(_dataService);
             statsWindow.Owner = this;
@@ -1188,8 +1238,30 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void ProfessionSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Placeholder kontrolü
+            UpdateProfessionSearchPlaceholder();
+
             // Lokasyon filtreleme metodunu çağır (arama da dahil)
             FilterProfessionsByLocation();
+        }
+
+        private void ProfessionSearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateProfessionSearchPlaceholder();
+        }
+
+        private void ProfessionSearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateProfessionSearchPlaceholder();
+        }
+
+        private void UpdateProfessionSearchPlaceholder()
+        {
+            if (ProfessionSearchPlaceholder != null)
+            {
+                ProfessionSearchPlaceholder.Visibility = string.IsNullOrEmpty(ProfessionSearchTextBox.Text) ?
+                    Visibility.Visible : Visibility.Hidden;
+            }
         }
 
         /// <summary>
@@ -1299,26 +1371,120 @@ namespace BilirkisiMasaustu
                 var kuruluSecimWindow = new KuruluSecimWindow();
                 var result = kuruluSecimWindow.ShowDialog();
 
-                if (result == true && !string.IsNullOrEmpty(kuruluSecimWindow.SelectedJsonPath))
+                if (result == true)
                 {
-                    // Loading göster
-                    LoadingOverlay.Visibility = Visibility.Visible;
-                    StatusLabel.Text = "Yeni kurulu verileri yükleniyor...";
+                    if (!string.IsNullOrEmpty(kuruluSecimWindow.SelectedJsonPath))
+                    {
+                        // Loading göster
+                        if (LoadingOverlay != null)
+                            LoadingOverlay.Visibility = Visibility.Visible;
+                        if (StatusLabel != null)
+                            StatusLabel.Text = "Yeni kurulu verileri yükleniyor...";
 
-                    // Yeni JSON dosya yolunu ayarla
-                    _dataService.SetJsonFilePath(kuruluSecimWindow.SelectedJsonPath);
-                    _currentKuruluName = kuruluSecimWindow.SelectedKuruluName ?? "Bilirkişi Kurulu";
+                        // Yeni JSON dosya yolunu ayarla
+                        _dataService?.SetJsonFilePath(kuruluSecimWindow.SelectedJsonPath);
+                        _currentKuruluName = kuruluSecimWindow.SelectedKuruluName ?? "Bilirkişi Kurulu";
 
-                    // Verileri yeniden yükle
-                    await LoadDataAsync();
+                        // Kurul seçimini kaydet
+                        SaveKuruluSelection(kuruluSecimWindow.SelectedJsonPath);
 
-                    ShowNotification($"{_currentKuruluName} başarıyla yüklendi!", "#28A745");
+                        // Verileri yeniden yükle
+                        await LoadDataAsync();
+
+                        ShowNotification($"{_currentKuruluName} başarıyla yüklendi!", "#28A745");
+                    }
+                    else
+                    {
+                        ShowNotification("Kurul seçimi yapılmadı!", "#FFC107");
+                    }
+                }
+                else
+                {
+                    // Kullanıcı Cancel'a bastı veya pencereyi kapattı
+                    ShowNotification("Kurul değiştirme işlemi iptal edildi.", "#6C757D");
                 }
             }
             catch (Exception ex)
             {
-                LoadingOverlay.Visibility = Visibility.Collapsed;
+                if (LoadingOverlay != null)
+                    LoadingOverlay.Visibility = Visibility.Collapsed;
                 MessageBox.Show($"Kurulu değiştirirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Kurul seçimini kaydet
+        /// </summary>
+        private void SaveKuruluSelection(string filePath)
+        {
+            try
+            {
+                var settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.txt");
+                File.WriteAllText(settingsPath, filePath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Kurul seçimi kaydetme hatası: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Kurul seçimini temizle - bir sonraki açılışta kurul seçim ekranı gösterilir
+        /// </summary>
+        private void ClearKuruluSelection_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    "Kaydedilmiş kurul seçimi temizlenecek.\nBir sonraki açılışta kurul seçim ekranı gösterilecek.\n\nDevam etmek istiyor musunuz?",
+                    "Kurul Seçimini Temizle",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    var settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.txt");
+                    if (File.Exists(settingsPath))
+                    {
+                        File.Delete(settingsPath);
+                        ShowNotification("Kurul seçimi temizlendi. Bir sonraki açılışta kurul seçim ekranı gösterilecek.", "#28A745");
+                    }
+                    else
+                    {
+                        ShowNotification("Temizlenecek kurul seçimi bulunamadı.", "#FFC107");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Kurul seçimi temizlenirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Uygulama başlangıcında kurul bilgisini güncelle (veri yüklenmeden önce)
+        /// </summary>
+        private void UpdateKuruluInfoOnStartup()
+        {
+            try
+            {
+                var kuruluName = _currentKuruluName ?? "Bilirkişi Kurulu";
+
+                // Sol taraftaki TextBlock'ı güncelle
+                if (KuruluInfoTextBlock != null)
+                {
+                    KuruluInfoTextBlock.Text = kuruluName;
+                }
+
+                // Ortadaki label'ı geçici olarak güncelle
+                if (KuruluInfoLabel != null)
+                {
+                    KuruluInfoLabel.Text = $"{kuruluName} - Yükleniyor...";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateKuruluInfoOnStartup hatası: {ex.Message}");
             }
         }
 
@@ -1327,7 +1493,26 @@ namespace BilirkisiMasaustu
         /// </summary>
         private void UpdateKuruluInfo(int kayitSayisi)
         {
-            KuruluInfoLabel.Text = $"{_currentKuruluName} - {kayitSayisi} Kayıt";
+            try
+            {
+                var kuruluName = _currentKuruluName ?? "Bilirkişi Kurulu";
+
+                // Ortadaki label'ı güncelle
+                if (KuruluInfoLabel != null)
+                {
+                    KuruluInfoLabel.Text = $"{kuruluName} - {kayitSayisi} Kayıt";
+                }
+
+                // Sol taraftaki TextBlock'ı güncelle
+                if (KuruluInfoTextBlock != null)
+                {
+                    KuruluInfoTextBlock.Text = kuruluName;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateKuruluInfo hatası: {ex.Message}");
+            }
         }
     }
 }

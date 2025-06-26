@@ -164,6 +164,11 @@ namespace BilirkisiMasaustu
                         return;
                     }
 
+                    // Kurul seçimini kaydet
+                    SaveKuruluSelection(selectedKurulu.FilePath);
+
+
+
                     // Ana pencereyi aç
                     var mainWindow = new MainWindow(selectedKurulu.FilePath);
                     mainWindow.Show();
@@ -176,6 +181,22 @@ namespace BilirkisiMasaustu
                     MessageBox.Show($"Ana pencere açılırken hata oluştu:\n\nHata: {ex.Message}\n\nDosya: {selectedKurulu.FilePath}\n\nDetay:\n{ex.StackTrace}",
                         "Ana Pencere Hatası", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Kurul seçimini kaydet
+        /// </summary>
+        private void SaveKuruluSelection(string filePath)
+        {
+            try
+            {
+                var settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.txt");
+                File.WriteAllText(settingsPath, filePath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Kurul seçimi kaydetme hatası: {ex.Message}");
             }
         }
 
