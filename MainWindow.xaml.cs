@@ -27,7 +27,7 @@ namespace BilirkisiMasaustu
         private List<string> _allIller = new List<string>();
         private Dictionary<string, List<string>> _ilIlceMap = new Dictionary<string, List<string>>();
         private string _currentKuruluName = "Bilinmiyor";
-        private string _jsonPathToLoad = null; // Yüklenecek JSON dosyasının yolunu tutar
+        private string? _jsonPathToLoad = null; // Yüklenecek JSON dosyasının yolunu tutar
         private bool _isDataLoaded = false;
 
         public MainWindow()
@@ -112,7 +112,7 @@ namespace BilirkisiMasaustu
         /// Belirtilen JSON dosyasından veya varsayılan yoldan verileri yükler.
         /// </summary>
         /// <param name="jsonPath">Yüklenecek JSON dosyasının yolu. Null ise varsayılan kullanılır.</param>
-        private async Task LoadDataAsync(string jsonPath = null)
+        private async Task LoadDataAsync(string? jsonPath = null)
         {
             // Eğer bir yol belirtilmişse, DataService'deki yolu güncelle
             if (!string.IsNullOrEmpty(jsonPath))

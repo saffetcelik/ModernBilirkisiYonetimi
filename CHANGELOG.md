@@ -8,14 +8,9 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 ## [Unreleased]
 
 ### Eklenen
-- GitHub Actions ile otomatik release sistemi
-- Performanslı build optimizasyonları
-- Self-contained deployment yapılandırması
-- Otomatik versiyonlama sistemi
-
 ### Değiştirilen
-- Proje yapılandırması optimize edildi
-- Build performansı iyileştirildi
+### Düzeltilen
+### Kaldırılan
 
 ## [1.0.0] - 2024-12-26
 
@@ -27,8 +22,12 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 - Favori bilirkişi sistemi
 - 15 il için bilirkişi veritabanı desteği
 - Self-contained deployment desteği
-- Tek dosya executable oluşturma
+- Tek dosya executable oluşturma (~76 MB)
 - Modern ve kullanıcı dostu arayüz tasarımı
+- GitHub Actions ile otomatik release sistemi
+- Performanslı build optimizasyonları
+- Otomatik versiyonlama sistemi
+- Kapsamlı dokümantasyon ve kullanım rehberi
 
 ### Teknik Özellikler
 - .NET 8 framework desteği
