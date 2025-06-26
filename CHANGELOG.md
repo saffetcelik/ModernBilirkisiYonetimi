@@ -1,6 +1,6 @@
-# Changelog
+# Changelog - BilirkisiAramaSistemi
 
-Bu dosya projenin tüm önemli değişikliklerini belgelemektedir.
+Bu dosya BilirkisiAramaSistemi projesinin tüm önemli değişikliklerini belgelemektedir.
 
 Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardına dayanmaktadır,
 ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmaktadır.

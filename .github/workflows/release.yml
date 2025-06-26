@@ -1,9 +1,9 @@
-name: 🚀 Uzman Raporu Release
+name: 🚀 BilirkisiAramaSistemi Release
 
 on:
   push:
     tags:
-      - 'uzman-raporu-v*'
+      - 'bilirkisi-arama-sistemi-v*'
   workflow_dispatch:
     inputs:
       version:
@@ -18,7 +18,7 @@ permissions:
 env:
   DOTNET_VERSION: '8.0.x'
   PROJECT_NAME: 'BilirkisiMasaustu'
-  APP_NAME: 'Uzman Raporu'
+  APP_NAME: 'BilirkisiAramaSistemi'
 
 jobs:
   release:
@@ -43,15 +43,15 @@ jobs:
         run: |
           if ("${{ github.event_name }}" -eq "workflow_dispatch") {
             $version = "${{ github.event.inputs.version }}"
-            $tagName = "uzman-raporu-v$version"
+            $tagName = "bilirkisi-arama-sistemi-v$version"
           } else {
             $tagName = "${{ github.ref_name }}"
-            $version = $tagName -replace '^uzman-raporu-v', ''
+            $version = $tagName -replace '^bilirkisi-arama-sistemi-v', ''
           }
-          
+
           Write-Output "VERSION=$version" >> $env:GITHUB_OUTPUT
           Write-Output "TAG_NAME=$tagName" >> $env:GITHUB_OUTPUT
-          Write-Output "PACKAGE_NAME=UzmanRaporu-v$version-Windows-x64" >> $env:GITHUB_OUTPUT
+          Write-Output "PACKAGE_NAME=BilirkisiAramaSistemi-v$version-Windows-x64" >> $env:GITHUB_OUTPUT
           
           Write-Host "Version: $version"
           Write-Host "Tag: $tagName"
@@ -121,7 +121,7 @@ jobs:
           if (Test-Path "LICENSE") { Copy-Item "LICENSE" "$packageDir/" }
           
           # Create installation instructions
-          $instructions = "Uzman Raporu v${{ steps.version.outputs.VERSION }}`n`nKURULUM:`n1. BilirkisiMasaustu.exe dosyasina cift tiklayin`n2. Uygulama dogrudan calisacaktir`n`nGereksinimler: Yok (.NET 8 dahil)`nGelistirici: Saffet Celik`nE-posta: iletisim@saffetcelik.com"
+          $instructions = "BilirkisiAramaSistemi v${{ steps.version.outputs.VERSION }}`n`nKURULUM:`n1. BilirkisiMasaustu.exe dosyasina cift tiklayin`n2. Uygulama dogrudan calisacaktir`n`nGereksinimler: Yok (.NET 8 dahil)`nGelistirici: Saffet Celik`nE-posta: iletisim@saffetcelik.com"
           
           Set-Content "$packageDir/KURULUM.txt" $instructions
           Write-Host "✅ Created installation instructions"

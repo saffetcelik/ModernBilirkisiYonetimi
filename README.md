@@ -1,8 +1,8 @@
-# Uzman Raporu: Yeni Nesil Bilirkişi Platformu
+# BilirkisiAramaSistemi: Modern Bilirkişi Arama Platformu
 
 ![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet) ![Platform](https://img.shields.io/badge/Platform-Windows-blue) ![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen)
 
-Uzman Raporu, adli ve hukuki süreçlerinizde en doğru bilirkişiyi saniyeler içinde bulmanızı sağlayan modern bir masaüstü uygulamasıdır. Gelişmiş arama ve filtreleme yetenekleriyle, Türkiye'nin dört bir yanındaki binlerce uzman profiline anında erişim sunarak adaletin hızına hız katar.
+BilirkisiAramaSistemi, adli ve hukuki süreçlerinizde en doğru bilirkişiyi saniyeler içinde bulmanızı sağlayan modern bir masaüstü uygulamasıdır. Gelişmiş arama ve filtreleme yetenekleriyle, Türkiye'nin dört bir yanındaki binlerce uzman profiline anında erişim sunarak adaletin hızına hız katar.
 
 ## 📸 Ekran Görüntüleri
 
