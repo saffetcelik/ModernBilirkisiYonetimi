@@ -1,0 +1,181 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_NAME: 'BilirkisiMasaustu'
+  SOLUTION_FILE: 'ModernBilirkisiYonetimi.sln'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Get version from tag or input
+      id: get_version
+      run: |
+        if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+          $version = "${{ github.event.inputs.version }}"
+        } else {
+          $version = "${{ github.ref_name }}"
+        }
+        $version = $version -replace '^v', ''
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "TAG_NAME=v$version" >> $env:GITHUB_OUTPUT
+        Write-Host "Version: $version"
+      shell: powershell
+
+    - name: Update project version
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $csprojPath = "${{ env.PROJECT_NAME }}.csproj"
+        
+        $content = Get-Content $csprojPath -Raw
+        $content = $content -replace '<AssemblyVersion>.*?</AssemblyVersion>', "<AssemblyVersion>$version.0</AssemblyVersion>"
+        $content = $content -replace '<FileVersion>.*?</FileVersion>', "<FileVersion>$version.0</FileVersion>"
+        $content = $content -replace '<Version>.*?</Version>', "<Version>$version</Version>"
+        
+        Set-Content $csprojPath $content -NoNewline
+        Write-Host "Updated version to: $version"
+      shell: powershell
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+    - name: Build solution
+      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+
+    - name: Run tests (if any)
+      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal
+      continue-on-error: true
+
+    - name: Publish application
+      run: |
+        dotnet publish ${{ env.PROJECT_NAME }}.csproj `
+          --configuration Release `
+          --runtime win-x64 `
+          --self-contained true `
+          --output ./publish `
+          /p:PublishSingleFile=true `
+          /p:EnableCompressionInSingleFile=true `
+          /p:DebuggerSupport=false `
+          /p:PublishReadyToRun=true `
+          /p:IncludeNativeLibrariesForSelfExtract=true
+      shell: powershell
+
+    - name: Create release package
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $packageName = "UzmanRaporu-v$version-win-x64"
+        
+        # Ana klasörü oluştur
+        New-Item -ItemType Directory -Path $packageName -Force
+        
+        # Exe dosyasını kopyala
+        Copy-Item "./publish/${{ env.PROJECT_NAME }}.exe" "./$packageName/"
+        
+        # İller klasörünü kopyala
+        Copy-Item "./iller" "./$packageName/" -Recurse
+        
+        # README ve LICENSE dosyalarını kopyala
+        if (Test-Path "README.md") { Copy-Item "README.md" "./$packageName/" }
+        if (Test-Path "LICENSE") { Copy-Item "LICENSE" "./$packageName/" }
+        
+        # ZIP dosyası oluştur
+        Compress-Archive -Path "./$packageName/*" -DestinationPath "./$packageName.zip" -Force
+        
+        # Dosya boyutlarını göster
+        $exeSize = [math]::Round((Get-Item "./publish/${{ env.PROJECT_NAME }}.exe").Length / 1MB, 2)
+        $zipSize = [math]::Round((Get-Item "./$packageName.zip").Length / 1MB, 2)
+        
+        Write-Host "Executable size: $exeSize MB"
+        Write-Host "Package size: $zipSize MB"
+        
+        echo "PACKAGE_NAME=$packageName" >> $env:GITHUB_OUTPUT
+        echo "EXE_SIZE=$exeSize" >> $env:GITHUB_OUTPUT
+        echo "ZIP_SIZE=$zipSize" >> $env:GITHUB_OUTPUT
+      shell: powershell
+      id: package
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $exeSize = "${{ steps.package.outputs.EXE_SIZE }}"
+        $zipSize = "${{ steps.package.outputs.ZIP_SIZE }}"
+        
+        $changelog = @"
+        ## 🚀 Uzman Raporu v$version
+        
+        ### 📦 İndirme Bilgileri
+        - **Executable Boyutu:** $exeSize MB
+        - **Paket Boyutu:** $zipSize MB
+        - **Platform:** Windows x64
+        - **Gereksinimler:** Hiçbiri (.NET 8 dahil)
+        
+        ### 🔧 Kurulum
+        1. ZIP dosyasını indirin ve çıkartın
+        2. `${{ env.PROJECT_NAME }}.exe` dosyasını çalıştırın
+        3. Herhangi bir ek kurulum gerekmez!
+        
+        ### ✨ Özellikler
+        - Self-contained deployment (bağımsız çalışır)
+        - Optimized binary (küçük boyut)
+        - İller klasörü dahil
+        - Modern WPF arayüzü
+        - Gelişmiş arama ve filtreleme
+        - İstatistik görüntüleme
+        
+        ### 📧 İletişim
+        - **Geliştirici:** Saffet Çelik
+        - **E-posta:** iletisim@saffetcelik.com
+        - **GitHub:** github.com/saffetcelik
+        "@
+        
+        $changelog | Out-File -FilePath "CHANGELOG.md" -Encoding UTF8
+        echo "CHANGELOG<<EOF" >> $env:GITHUB_OUTPUT
+        echo $changelog >> $env:GITHUB_OUTPUT
+        echo "EOF" >> $env:GITHUB_OUTPUT
+      shell: powershell
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_version.outputs.TAG_NAME }}
+        name: "Uzman Raporu ${{ steps.get_version.outputs.TAG_NAME }}"
+        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        files: |
+          ${{ steps.package.outputs.PACKAGE_NAME }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: uzman-raporu-${{ steps.get_version.outputs.VERSION }}
+        path: |
+          ${{ steps.package.outputs.PACKAGE_NAME }}.zip
+          ./publish/${{ env.PROJECT_NAME }}.exe
+        retention-days: 30

@@ -392,3 +392,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Custom ignores for this project
+test-publish/
+release/

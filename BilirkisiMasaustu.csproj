@@ -5,6 +5,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
 
     <!-- Self-Contained Deployment için -->
     <PublishSingleFile>true</PublishSingleFile>
@@ -13,10 +14,29 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-    <AssemblyTitle>Bilirkişi Sicil Arama Sistemi</AssemblyTitle>
-    <AssemblyDescription>Masaüstü Bilirkişi Arama Uygulaması</AssemblyDescription>
+    <!-- Performans optimizasyonları -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebuggerSupport>false</DebuggerSupport>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <InvariantGlobalization>false</InvariantGlobalization>
+
+    <!-- Uygulama bilgileri -->
+    <ApplicationIcon>ico.ico</ApplicationIcon>
+    <AssemblyTitle>Uzman Raporu - Bilirkişi Sicil Arama Sistemi</AssemblyTitle>
+    <AssemblyDescription>Modern Bilirkişi Arama ve Yönetim Uygulaması</AssemblyDescription>
+    <AssemblyCompany>Saffet Çelik</AssemblyCompany>
+    <AssemblyProduct>Uzman Raporu</AssemblyProduct>
+    <AssemblyCopyright>Copyright © 2024 Saffet Çelik</AssemblyCopyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
+
+    <!-- Repository bilgileri -->
+    <RepositoryUrl>https://github.com/saffetcelik/ModernBilirkisiYonetimi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/saffetcelik/ModernBilirkisiYonetimi</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

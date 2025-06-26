@@ -327,6 +327,46 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
+
+        <!-- Hakkında Kartı Stili -->
+        <Style x:Key="AboutCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DEE2E6"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="5" Opacity="0.3" BlurRadius="15"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Hakkında Başlık Stili -->
+        <Style x:Key="AboutHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0D6EFD"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <!-- Hakkında İçerik Stili -->
+        <Style x:Key="AboutContentStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#495057"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineHeight" Value="22"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+
+        <!-- Hakkında Link Stili -->
+        <Style x:Key="AboutLinkStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#0D6EFD"/>
+            <Setter Property="TextDecorations" Value="Underline"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -378,9 +418,13 @@
                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
                 </StackPanel>
 
-                <!-- Sağ taraf - boş (gelecekte başka butonlar eklenebilir) -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <!-- Gelecekte başka butonlar buraya eklenebilir -->
+                <!-- Sağ taraf - Hakkında Butonu -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="AboutButton"
+                            Content="ℹ️ Hakkında"
+                            Click="AboutButton_Click"
+                            Style="{StaticResource SmallSecondaryButtonStyle}"
+                            ToolTip="Uygulama hakkında bilgi"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -824,6 +868,124 @@
                     <TextBlock x:Name="NotificationText"
                               Text="Sicil kopyalandı!"
                               Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- Hakkında Kartı Overlay -->
+        <Border x:Name="AboutOverlay" Grid.RowSpan="4"
+               Background="#80000000" Visibility="Collapsed"
+               MouseLeftButtonDown="AboutOverlay_MouseLeftButtonDown">
+            <Border x:Name="AboutCard" Style="{StaticResource AboutCardStyle}"
+                   Width="420" Height="380"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Padding="30">
+                <Border.RenderTransform>
+                    <ScaleTransform x:Name="AboutCardScale" ScaleX="0.8" ScaleY="0.8"/>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Border.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="AboutCardScale"
+                                               Storyboard.TargetProperty="ScaleX"
+                                               From="0.8" To="1.0" Duration="0:0:0.3">
+                                    <DoubleAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="AboutCardScale"
+                                               Storyboard.TargetProperty="ScaleY"
+                                               From="0.8" To="1.0" Duration="0:0:0.3">
+                                    <DoubleAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+                <StackPanel>
+                    <!-- Başlık -->
+                    <TextBlock Text="ℹ️ Hakkında" Style="{StaticResource AboutHeaderStyle}"/>
+
+                    <!-- Uygulama Bilgisi (HATA AYIKLAMA İÇİN GEÇİCİ OLARAK DEVRE DIŞI BIRAKILDI) -->
+                    <!-- 
+                    <Border Background="Linear Gradient(90deg, #F8F9FA 0%, #E9ECEF 100%)"
+                           CornerRadius="12" Padding="20" Margin="0,0,0,20"
+                           BorderBrush="#DEE2E6" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="🔍 Bilirkişi Sicil Arama Sistemi"
+                                      FontSize="18" FontWeight="Bold"
+                                      Foreground="#0D6EFD" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <TextBlock Text="Modern ve kullanıcı dostu bilirkişi arama uygulaması"
+                                      FontSize="13" Foreground="#6C757D"
+                                      HorizontalAlignment="Center" FontStyle="Italic"/>
+                            <TextBlock Text="v1.0.0 - .NET 8"
+                                      FontSize="11" Foreground="#ADB5BD"
+                                      HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    -->
+
+                    <!-- Geliştirici Bilgileri -->
+                    <Border Background="White" CornerRadius="10" Padding="20"
+                           BorderBrush="#E9ECEF" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="👨‍💻 Geliştirici Bilgileri" FontSize="16" FontWeight="SemiBold"
+                                      Foreground="#495057" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- İsim -->
+                                <Border Grid.Row="0" Grid.Column="0" Background="#F8F9FA"
+                                       CornerRadius="15" Width="30" Height="30" Margin="0,5,10,5">
+                                    <TextBlock Text="👤" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="Saffet Çelik"
+                                          FontSize="15" FontWeight="SemiBold" Foreground="#495057"
+                                          VerticalAlignment="Center" Margin="0,5"/>
+
+                                <!-- Email -->
+                                <Border Grid.Row="1" Grid.Column="0" Background="#E3F2FD"
+                                       CornerRadius="15" Width="30" Height="30" Margin="0,5,10,5">
+                                    <TextBlock Text="📧" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="iletisim@saffetcelik.com"
+                                          Style="{StaticResource AboutLinkStyle}"
+                                          VerticalAlignment="Center"
+                                          MouseLeftButtonDown="EmailLink_Click"/>
+
+                                <!-- GitHub -->
+                                <Border Grid.Row="2" Grid.Column="0" Background="#F3E5F5"
+                                       CornerRadius="15" Width="30" Height="30" Margin="0,5,10,5">
+                                    <TextBlock Text="🔗" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="github.com/saffetcelik"
+                                          Style="{StaticResource AboutLinkStyle}"
+                                          VerticalAlignment="Center"
+                                          MouseLeftButtonDown="GitHubLink_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Kapatma Butonu -->
+                    <Button x:Name="CloseAboutButton"
+                           Content="✖️ Kapat"
+                           Click="CloseAboutButton_Click"
+                           Style="{StaticResource PrimaryButtonStyle}"
+                           HorizontalAlignment="Center"
+                           Width="120"
+                           Margin="0,25,0,0"/>
                 </StackPanel>
             </Border>
         </Border>
