@@ -15,6 +15,256 @@
             <Setter Property="Height" Value="40"/>
         </Style>
 
+        <!-- Mavi Buton Style -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0D6EFD"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#0B5ED7"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#0A58CA"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#6C757D"/>
+                                <Setter Property="Foreground" Value="#ADB5BD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Gri Buton Style -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#6C757D"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#5C636A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#565E64"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Kırmızı Buton Style (Silme işlemleri için) -->
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DC3545"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Padding" Value="5,3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="3"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C82333"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#BD2130"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Küçük Gri Buton Style -->
+        <Style x:Key="SmallSecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#6C757D"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#5C636A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#565E64"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Yeşil Buton Style (Başarı işlemleri için) -->
+        <Style x:Key="SuccessButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#218838"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1E7E34"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Sarı Buton Style (Favori işlemleri için) -->
+        <Style x:Key="WarningButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FFC107"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E0A800"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#D39E00"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Küçük Mavi Buton Style -->
+        <Style x:Key="SmallPrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007BFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#0056B3"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#004085"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#ADB5BD"/>
+                                <Setter Property="Foreground" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="ResultListBoxStyle" TargetType="ListBox">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="Margin" Value="5"/>
@@ -101,9 +351,8 @@
                     <Button x:Name="ChangeKuruluButton"
                             Content="🏛️ Kurulu Değiştir"
                             Click="ChangeKuruluButton_Click"
-                            Background="#6C757D" Foreground="White"
-                            FontSize="12" FontWeight="SemiBold"
-                            Padding="15,8" Margin="0,0,10,0"
+                            Style="{StaticResource SmallSecondaryButtonStyle}"
+                            Margin="0,0,10,0"
                             ToolTip="Bilirkişi kurulunu değiştir">
                         <Button.ContextMenu>
                             <ContextMenu>
@@ -164,21 +413,19 @@
                     </Grid>
                 </StackPanel>
 
-                <Button x:Name="SearchButton" Grid.Column="1" 
-                        Content="🔍 Sorgula" 
+                <Button x:Name="SearchButton" Grid.Column="1"
+                        Content="🔍 Sorgula"
                         Click="SearchButton_Click"
-                        Background="#0D6EFD" Foreground="White"
-                        FontSize="14" FontWeight="SemiBold"
-                        Padding="20,10" Margin="10,25,5,5"
-                        Height="40" VerticalAlignment="Bottom"/>
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="10,25,5,5"
+                        VerticalAlignment="Bottom"/>
 
-                <Button x:Name="StatsButton" Grid.Column="2" 
-                        Content="📊 İstatistik" 
+                <Button x:Name="StatsButton" Grid.Column="2"
+                        Content="📊 İstatistik"
                         Click="StatsButton_Click"
-                        Background="#6C757D" Foreground="White"
-                        FontSize="14" FontWeight="SemiBold"
-                        Padding="15,10" Margin="5,25,5,5"
-                        Height="40" VerticalAlignment="Bottom"/>
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Margin="5,25,5,5"
+                        VerticalAlignment="Bottom"/>
             </Grid>
         </Border>
 
@@ -217,8 +464,7 @@
                             <Button Grid.Column="1" x:Name="AddFavoriteButton"
                                    Content="⭐ Favoriye Ekle"
                                    Click="AddFavoriteButton_Click"
-                                   Background="#FFC107" Foreground="White"
-                                   FontSize="10" Padding="8,3"
+                                   Style="{StaticResource WarningButtonStyle}"
                                    IsEnabled="False"/>
                         </Grid>
                     </Border>
@@ -256,8 +502,7 @@
                             <Button Grid.Column="1" x:Name="ClearFavoritesButton"
                                    Content="🗑️"
                                    Click="ClearFavoritesButton_Click"
-                                   Background="#DC3545" Foreground="White"
-                                   FontSize="10" Padding="5,3"
+                                   Style="{StaticResource DangerButtonStyle}"
                                    ToolTip="Tüm favorileri temizle"/>
                         </Grid>
                     </Border>
@@ -296,15 +541,14 @@
                                 <Button x:Name="CopyButton"
                                        Content="📋 Sicil Kopyala"
                                        Click="CopyButton_Click"
-                                       Background="#28A745" Foreground="White"
-                                       FontSize="11" Padding="10,5" Margin="0,0,5,0"
+                                       Style="{StaticResource SuccessButtonStyle}"
+                                       Margin="0,0,5,0"
                                        IsEnabled="False"/>
 
                                 <Button x:Name="CopyTemplateButton"
                                        Content="📄 Şablon Kopyala"
                                        Click="CopyTemplateButton_Click"
-                                       Background="#007BFF" Foreground="White"
-                                       FontSize="11" Padding="10,5"
+                                       Style="{StaticResource SmallPrimaryButtonStyle}"
                                        IsEnabled="False"/>
                             </StackPanel>
                         </Grid>
@@ -506,8 +750,7 @@
                                     <Button x:Name="ProfessionCopyButton" Grid.Column="1"
                                            Content="📋 Sicil Kopyala"
                                            Click="ProfessionCopyButton_Click"
-                                           Background="#28A745" Foreground="White"
-                                           FontSize="11" Padding="10,5"
+                                           Style="{StaticResource SuccessButtonStyle}"
                                            IsEnabled="False"/>
                                 </Grid>
                             </Border>

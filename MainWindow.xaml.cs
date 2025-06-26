@@ -359,11 +359,13 @@ namespace BilirkisiMasaustu
             if (_favoriService.IsFavori(bilirkisi))
             {
                 AddFavoriteButton.Content = "⭐ Favoriden Çıkar";
-                AddFavoriteButton.Background = Brushes.Orange;
+                // Style'ı koruyarak sadece background rengini değiştir
+                AddFavoriteButton.Background = new SolidColorBrush(Color.FromRgb(255, 152, 0)); // Orange
             }
             else
             {
                 AddFavoriteButton.Content = "⭐ Favoriye Ekle";
+                // Style'ı koruyarak sadece background rengini değiştir
                 AddFavoriteButton.Background = new SolidColorBrush(Color.FromRgb(255, 193, 7)); // #FFC107
             }
         }
