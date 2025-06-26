@@ -56,21 +56,37 @@ Uzman Raporu, adli ve hukuki süreçlerinizde en doğru bilirkişiyi saniyeler i
 
 ---
 
-## 📦 Derleme (Publish)
+## 📦 Release Sürümü Oluşturma
 
-Uygulamanın .NET bağımlılığı olmayan, diğer bilgisayarlarda doğrudan çalışabilen sürümünü oluşturmak için aşağıdaki komutu kullanabilirsiniz.
-
+### Hızlı Build (Önerilen)
 ```powershell
-dotnet publish BilirkisiMasaustu.csproj --configuration Release --runtime win-x64 --self-contained true
+.\build-release-final.ps1 -Version "1.0.1"
 ```
 
-Eğer tüm dosyaları tek bir `.exe` içinde toplamak isterseniz:
-
-```powershell
-dotnet publish --configuration Release --runtime win-x64 --self-contained true /p:PublishSingleFile=true
+### GitHub Actions ile Otomatik Release
+1. Version tag'i oluşturun:
+```bash
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
-Oluşturulan dosyalar `bin/Release/net8.0-windows/win-x64/publish/` dizininde yer alacaktır.
+2. GitHub Actions otomatik olarak:
+   - Performanslı build oluşturur
+   - Self-contained executable hazırlar
+   - GitHub Release yayınlar
+   - ZIP paketi oluşturur
+
+### Manuel Build
+```powershell
+dotnet publish BilirkisiMasaustu.csproj --configuration Release --runtime win-x64 --self-contained true --output ./release
+```
+
+**Özellikler:**
+- 🚀 Self-contained (.NET 8 dahil)
+- 📦 Single-file executable (~76 MB)
+- ⚡ ReadyToRun optimizasyonu
+- 🗜️ Sıkıştırılmış binary
+- 📁 İller klasörü dahil
 
 ---
 
