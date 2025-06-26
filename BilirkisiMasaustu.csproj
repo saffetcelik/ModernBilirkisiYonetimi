@@ -13,6 +13,7 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
+    <ApplicationIcon>ico.ico</ApplicationIcon>
     <AssemblyTitle>Bilirkişi Sicil Arama Sistemi</AssemblyTitle>
     <AssemblyDescription>Masaüstü Bilirkişi Arama Uygulaması</AssemblyDescription>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>

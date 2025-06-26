@@ -26,7 +26,8 @@ namespace BilirkisiMasaustu
         private List<dynamic> _allProfessions = new List<dynamic>();
         private List<string> _allIller = new List<string>();
         private Dictionary<string, List<string>> _ilIlceMap = new Dictionary<string, List<string>>();
-        private string _currentKuruluName = "Bilirkişi Kurulu";
+        private string _currentKuruluName = "Bilinmiyor";
+        private string _jsonPathToLoad = null; // Yüklenecek JSON dosyasının yolunu tutar
         private bool _isDataLoaded = false;
 
         public MainWindow()
@@ -45,26 +46,32 @@ namespace BilirkisiMasaustu
             _favoriService.FavorilerChanged += OnFavorilerChanged;
 
             // Uygulama başladığında verileri yükle
-            Loaded += MainWindow_Loaded;
+            Loaded += MainWindow_Loaded; // Veri yükleme işlemini Loaded event'ine bağla
         }
 
         public MainWindow(string selectedJsonPath) : this()
         {
+            // Yüklenecek dosya yolunu ayarla. Veri yüklemesi MainWindow_Loaded'da yapılacak.
+            _jsonPathToLoad = selectedJsonPath;
+
+            // Dosya yolundan kurul adını çıkar
+            _currentKuruluName = ExtractKuruluNameFromPath(selectedJsonPath);
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
             try
             {
-                // Seçilen JSON dosya yolu ile data service'i güncelle
-                _dataService.SetJsonFilePath(selectedJsonPath);
+                // Eğer özel bir JSON yolu belirtilmemişse, varsayılanı yükle.
+                // Belirtilmişse, o dosyayı yükle.
+                await LoadDataAsync(_jsonPathToLoad);
 
-                // Kurulu adını dosya yolundan çıkar
-                var fileName = Path.GetFileNameWithoutExtension(selectedJsonPath);
-                _currentKuruluName = ParseKuruluNameFromFileName(fileName);
-
-                // UI yüklendikten sonra kurul bilgisini güncelle
-                Loaded += (s, e) => UpdateKuruluInfoOnStartup();
+                // Kurul bilgisini UI'da güncelle
+                UpdateKuruluInfoOnStartup();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"MainWindow constructor hatası:\n{ex.Message}\n\nDosya: {selectedJsonPath}",
+                MessageBox.Show($"MainWindow constructor hatası:\n{ex.Message}\n\nDosya: {_jsonPathToLoad}",
                     "Constructor Hatası", MessageBoxButton.OK, MessageBoxImage.Error);
                 throw;
             }
@@ -99,16 +106,20 @@ namespace BilirkisiMasaustu
             }
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            await LoadDataAsync();
-        }
+
 
         /// <summary>
-        /// JSON verilerini yükle
+        /// Belirtilen JSON dosyasından veya varsayılan yoldan verileri yükler.
         /// </summary>
-        private async Task LoadDataAsync()
+        /// <param name="jsonPath">Yüklenecek JSON dosyasının yolu. Null ise varsayılan kullanılır.</param>
+        private async Task LoadDataAsync(string jsonPath = null)
         {
+            // Eğer bir yol belirtilmişse, DataService'deki yolu güncelle
+            if (!string.IsNullOrEmpty(jsonPath))
+            {
+                _dataService.SetJsonFilePath(jsonPath);
+            }
+
             try
             {
                 // UI elementlerinin null olmadığını kontrol et
@@ -1516,5 +1527,136 @@ namespace BilirkisiMasaustu
                 System.Diagnostics.Debug.WriteLine($"UpdateKuruluInfo hatası: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Dosya yolundan kurul adını çıkarır
+        /// </summary>
+        private string ExtractKuruluNameFromPath(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath))
+                    return "Bilirkişi Kurulu";
+
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                // Örnek: "adana_bilirkisi_verileri" -> "Adana Bilirkişi Kurulu"
+                var parts = fileName.Replace("_bilirkisi_verileri", "").Split('_');
+                var ilAdi = string.Join(" ", parts.Select(p =>
+                    char.ToUpper(p[0]) + p.Substring(1).ToLower()));
+
+                // Özel durumlar için düzeltmeler
+                ilAdi = ilAdi switch
+                {
+                    "Diyarbakir" => "Diyarbakır",
+                    "Istanbul" => "İstanbul",
+                    "Izmir" => "İzmir",
+                    _ => ilAdi
+                };
+
+                return $"{ilAdi} Bilirkişi Kurulu";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ExtractKuruluNameFromPath hatası: {ex.Message}");
+                return "Bilirkişi Kurulu";
+            }
+        }
+
+        #region Hakkında Kartı Event Handlers
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                AboutOverlay.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"AboutButton_Click hatası: {ex.Message}");
+            }
+        }
+
+        private void CloseAboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                AboutOverlay.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"CloseAboutButton_Click hatası: {ex.Message}");
+            }
+        }
+
+        private void AboutOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                // Overlay'e tıklandığında kartı kapat (arka plana tıklama)
+                if (e.Source == AboutOverlay)
+                {
+                    AboutOverlay.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"AboutOverlay_MouseLeftButtonDown hatası: {ex.Message}");
+            }
+        }
+
+        private void EmailLink_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "mailto:iletisim@saffetcelik.com",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"EmailLink_Click hatası: {ex.Message}");
+                // Email açılamazsa, adresi panoya kopyala
+                try
+                {
+                    Clipboard.SetText("iletisim@saffetcelik.com");
+                    ShowNotification("Email adresi panoya kopyalandı!");
+                }
+                catch
+                {
+                    // Sessizce geç
+                }
+            }
+        }
+
+        private void GitHubLink_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "https://github.com/saffetcelik",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GitHubLink_Click hatası: {ex.Message}");
+                // URL açılamazsa, adresi panoya kopyala
+                try
+                {
+                    Clipboard.SetText("https://github.com/saffetcelik");
+                    ShowNotification("GitHub adresi panoya kopyalandı!");
+                }
+                catch
+                {
+                    // Sessizce geç
+                }
+            }
+        }
+
+        #endregion
     }
 }
