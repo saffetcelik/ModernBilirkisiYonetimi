@@ -2,7 +2,7 @@ param(
     [string]$Version = "1.0.1"
 )
 
-Write-Host "Building Uzman Raporu v$Version" -ForegroundColor Green
+Write-Host "Building BilirkisiAramaSistemi v$Version" -ForegroundColor Green
 
 # Clean
 if (Test-Path ".\release") {
@@ -35,7 +35,7 @@ if (-not (Test-Path $exePath)) {
 
 # Create package
 Write-Host "Creating package..." -ForegroundColor Cyan
-$packageName = "UzmanRaporu-v$Version-win-x64"
+$packageName = "BilirkisiAramaSistemi-v$Version-win-x64"
 $packageDir = ".\release\$packageName"
 
 New-Item -ItemType Directory -Path $packageDir -Force | Out-Null
@@ -48,14 +48,14 @@ if (Test-Path "LICENSE") { Copy-Item "LICENSE" $packageDir }
 
 # Create simple instructions
 $instructions = @"
-Uzman Raporu v$Version - Kurulum
+BilirkisiAramaSistemi v$Version - Kurulum
 
 1. BilirkisiMasaustu.exe dosyasina cift tiklayin
 2. Uygulama dogrudan calisacaktir
 
 Gereksinimler: Yok (.NET 8 dahil)
 Gelistirici: Saffet Celik
-E-posta: iletisim@saffetcelik.com
+E-posta: iletisim@saffetcelik.com.tr
 "@
 
 Set-Content (Join-Path $packageDir "KURULUM.txt") $instructions

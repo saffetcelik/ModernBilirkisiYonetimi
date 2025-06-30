@@ -1611,7 +1611,7 @@ namespace BilirkisiMasaustu
             {
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName = "mailto:iletisim@saffetcelik.com",
+                    FileName = "mailto:iletisim@saffetcelik.com.tr",
                     UseShellExecute = true
                 });
             }
@@ -1621,7 +1621,7 @@ namespace BilirkisiMasaustu
                 // Email açılamazsa, adresi panoya kopyala
                 try
                 {
-                    Clipboard.SetText("iletisim@saffetcelik.com");
+                    Clipboard.SetText("iletisim@saffetcelik.com.tr");
                     ShowNotification("Email adresi panoya kopyalandı!");
                 }
                 catch
