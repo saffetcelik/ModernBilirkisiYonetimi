@@ -12,6 +12,20 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 ### Düzeltilen
 ### Kaldırılan
 
+## [1.0.1] - 2024-12-26
+
+### Eklenen
+- Yeni özellikler ve iyileştirmeler
+
+### Değiştirilen
+- Uygulama adı "BilirkisiAramaSistemi" olarak güncellendi
+- GitHub Actions workflow modernize edildi
+- Release tag formatı güncellendi (bilirkisi-arama-sistemi-v*)
+
+### Düzeltilen
+- Nullable reference type uyarıları giderildi
+- GitHub Actions build sorunları çözüldü
+
 ## [1.0.0] - 2024-12-26
 
 ### Eklenen

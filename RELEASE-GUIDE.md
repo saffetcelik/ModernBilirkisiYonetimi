@@ -63,7 +63,7 @@ git push origin v1.0.1
 ## 📋 Release Özellikleri
 
 ### Oluşturulan Dosyalar
-- `UzmanRaporu-v{version}-win-x64.zip` - Tam paket
+- `BilirkisiAramaSistemi-v{version}-win-x64.zip` - Tam paket
 - İçinde:
   - `BilirkisiMasaustu.exe` - Ana uygulama
   - `iller/` - Veri dosyaları
