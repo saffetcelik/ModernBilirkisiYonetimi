@@ -143,5 +143,5 @@ Bu sistem sayesinde:
 ## 📞 İletişim
 
 - **Geliştirici**: Saffet Çelik
-- **E-posta**: iletisim@saffetcelik.com
+- **E-posta**: iletisim@saffetcelik.com.tr
 - **GitHub**: github.com/saffetcelik

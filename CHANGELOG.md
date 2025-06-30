@@ -74,5 +74,5 @@ Bu proje [Semantic Versioning](https://semver.org/) kullanır:
 ## İletişim
 
 - **Geliştirici:** Saffet Çelik
-- **E-posta:** iletisim@saffetcelik.com
+- **E-posta:** iletisim@saffetcelik.com.tr
 - **GitHub:** [github.com/saffetcelik](https://github.com/saffetcelik)

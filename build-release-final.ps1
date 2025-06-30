@@ -55,7 +55,7 @@ BilirkisiAramaSistemi v$Version - Kurulum
 
 Gereksinimler: Yok (.NET 8 dahil)
 Gelistirici: Saffet Celik
-E-posta: iletisim@saffetcelik.com
+E-posta: iletisim@saffetcelik.com.tr
 "@
 
 Set-Content (Join-Path $packageDir "KURULUM.txt") $instructions
