@@ -121,7 +121,7 @@ jobs:
           if (Test-Path "LICENSE") { Copy-Item "LICENSE" "$packageDir/" }
           
           # Create installation instructions
-          $instructions = "BilirkisiAramaSistemi v${{ steps.version.outputs.VERSION }}`n`nKURULUM:`n1. BilirkisiMasaustu.exe dosyasina cift tiklayin`n2. Uygulama dogrudan calisacaktir`n`nGereksinimler: Yok (.NET 8 dahil)`nGelistirici: Saffet Celik`nE-posta: iletisim@saffetcelik.com"
+          $instructions = "BilirkisiAramaSistemi v${{ steps.version.outputs.VERSION }}`n`nKURULUM:`n1. BilirkisiMasaustu.exe dosyasina cift tiklayin`n2. Uygulama dogrudan calisacaktir`n`nGereksinimler: Yok (.NET 8 dahil)`nGelistirici: Saffet Celik`nE-posta: iletisim@saffetcelik.com.tr"
           
           Set-Content "$packageDir/KURULUM.txt" $instructions
           Write-Host "✅ Created installation instructions"
